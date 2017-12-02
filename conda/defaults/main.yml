@@ -1,0 +1,3 @@
+---
+conda_user: "{{ ansible_env.SUDO_USER }}"
+conda_home: "{{ ansible_env.PWD }}"

@@ -1,0 +1,14 @@
+---
+cuda_version: "8.0"
+
+cuda_drivers_only: true
+
+cuda_home: /home/ubuntu
+
+cuda_repo_metadata:
+  "8.0": "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb"
+  "9.0": "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb"
+
+cudnn_files:
+  - "libcudnn7_7.0.4.31-1+cuda{{ cuda_version }}_amd64.deb"
+  - "libcudnn7-dev_7.0.4.31-1+cuda{{ cuda_version }}_amd64.deb"

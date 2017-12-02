@@ -1,0 +1,4 @@
+---
+- name: Wait for machine to come back
+  wait_for_connection:
+    delay: 30

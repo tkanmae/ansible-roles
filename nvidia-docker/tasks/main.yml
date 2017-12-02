@@ -1,0 +1,33 @@
+---
+- name: Install pre-requisites
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+- name: Add GPG key
+  apt_key:
+    url: 'https://nvidia.github.io/nvidia-docker/gpgkey'
+
+- name: Add repository
+  get_url:
+    url: 'https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list'
+    dest: '/etc/apt/sources.list.d/nvidia-docker.list'
+  register: result
+
+- name: Update repositories cache
+  apt:
+    update_cache: true
+  when: result.changed
+
+- name: Install nvidia-docker
+  apt:
+    name: nvidia-docker2
+  register: result
+
+- name: Reload Docker daemon configuration
+  command: pkill -SIGHUP dockerd
+  when: result.changed

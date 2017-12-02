@@ -1,0 +1,20 @@
+---
+- name: Download installer
+  get_url:
+    url: https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    dest: /var/tmp/Miniconda3-latest-Linux-x86_64.sh
+    force: no
+
+- name: Install conda
+  command: bash Miniconda3-latest-Linux-x86_64.sh -b -p "{{ conda_home }}/.miniconda3"
+  args:
+    chdir: /var/tmp
+    creates: "{{ conda_home }}/.miniconda3"
+  become: yes
+  become_user: "{{ conda_user }}"
+
+- name: Set up PATH
+  lineinfile:
+    dest: "{{ conda_home }}/.bashrc"
+    line: 'export PATH="{{ conda_home }}/.miniconda3/bin:$PATH"'
+    backup: yes

@@ -1,0 +1,76 @@
+---
+- name: Install pre-requisites
+  apt:
+    name: '{{ item }}'
+  with_items:
+    - build-essential
+    - 'linux-headers-{{ ansible_kernel }}'
+
+- name: Install repository meta data
+  apt:
+    deb: "{{ cuda_repo_metadata[cuda_version] }}"
+  ignore_errors: true
+
+- name: Add GPG key
+  apt_key:
+    id: 7FA2AF80
+    url: 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub'
+  register: result
+
+- name: Update repositories cache
+  apt:
+    update_cache: true
+  when: result.changed
+
+- name: Install CUDA drivers
+  apt:
+    update_cache: true
+    name: cuda-drivers
+  when: cuda_drivers_only
+  register: result_install_drivers
+
+- name: Install CUDA
+  apt:
+    name: "cuda-{{ cuda_version | replace('.', '-') }}"
+    update_cache: true
+  when: not cuda_drivers_only
+  register: result_install_cuda
+
+- name: Restart machine
+  shell: sleep 2 && /sbin/shutdown -r now 'Reboot triggered by Ansible'
+  args:
+    removes: /var/run/reboot-required
+  async: 1
+  poll: 0
+  when: result_install_drivers.changed or result_install_cuda.changed
+  notify:
+    - 'Wait for machine to come back'
+
+- meta: flush_handlers
+
+- name: Set up PATH
+  lineinfile:
+    dest: "{{ cuda_home }}/.bashrc"
+    line: 'export PATH="/usr/local/cuda-{{ cuda_version }}/bin:$PATH"'
+    backup: true
+  when: not cuda_drivers_only
+
+- name: Set up LD_LIBRARY_PATH
+  lineinfile:
+    dest: "{{ cuda_home }}/.bashrc"
+    line: 'export LD_LIBRARY_PATH="/usr/local/cuda-{{ cuda_version }}/lib64:$LD_LIBRARY_PATH"'
+    backup: true
+  when: not cuda_drivers_only
+
+- name: Copy deb files
+  copy:
+    src: '{{ item }}'
+    dest: '/tmp/{{ item }}'
+  with_items: '{{ cudnn_files }}'
+  when: not cuda_drivers_only
+
+- name: Install cuDNN
+  apt:
+    deb: '/tmp/{{ item }}'
+  with_items: '{{ cudnn_files }}'
+  when: not cuda_drivers_only
