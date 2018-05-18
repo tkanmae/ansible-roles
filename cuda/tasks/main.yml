@@ -62,15 +62,16 @@
     backup: true
   when: not cuda_drivers_only
 
-- name: Copy deb files
-  copy:
-    src: '{{ item }}'
-    dest: '/tmp/{{ item }}'
-  with_items: '{{ cudnn_files }}'
+- name: Download cuDNN archive file
+  get_url:
+    url: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
+    dest: "{{ cuda_home }}/cudnn.tar.gz"
   when: not cuda_drivers_only
 
-- name: Install cuDNN
-  apt:
-    deb: '/tmp/{{ item }}'
-  with_items: '{{ cudnn_files }}'
+- name: Install cuDNN archive file
+  unarchive:
+    remote_src: yes
+    src: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
+    dest: /usr/local
+    creates: /usr/local/cuda/include/cudnn.h
   when: not cuda_drivers_only
