@@ -62,13 +62,7 @@
     backup: true
   when: not cuda_drivers_only
 
-- name: Download cuDNN archive file
-  get_url:
-    url: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
-    dest: "{{ cuda_home }}/cudnn.tar.gz"
-  when: not cuda_drivers_only
-
-- name: Install cuDNN archive file
+- name: Install cuDNN
   unarchive:
     remote_src: yes
     src: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
