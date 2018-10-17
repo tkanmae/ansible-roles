@@ -1,12 +1,11 @@
 ---
 - name: Install pre-requisites
   apt:
-    name: "{{ item }}"
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - software-properties-common
+    package:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
 
 - name: Add GPG key
   apt_key:

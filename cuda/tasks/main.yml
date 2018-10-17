@@ -1,10 +1,9 @@
 ---
 - name: Install pre-requisites
   apt:
-    name: '{{ item }}'
-  with_items:
-    - build-essential
-    - 'linux-headers-{{ ansible_kernel }}'
+    package:
+      - build-essential
+      - 'linux-headers-{{ ansible_kernel }}'
 
 - name: Install repository meta data
   apt:
