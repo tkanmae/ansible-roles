@@ -13,8 +13,8 @@
   become: yes
   become_user: "{{ conda_user }}"
 
-- name: Set up PATH
+- name: Set up conda
   lineinfile:
     dest: "{{ conda_home }}/.bashrc"
-    line: 'export PATH="{{ conda_home }}/.miniconda3/bin:$PATH"'
+    line: '. "{{ conda_home }}/.miniconda3/etc/profile.d/conda.sh"'
     backup: yes
