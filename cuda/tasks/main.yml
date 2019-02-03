@@ -14,12 +14,11 @@
   apt_key:
     id: 7FA2AF80
     url: 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub'
-  register: result
 
-- name: Update repositories cache
+- name: Add machine learning repository
   apt:
-    update_cache: true
-  when: result.changed
+    deb: 'http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb'
+    update_cache: yes
 
 - name: Install CUDA drivers
   apt:
@@ -30,8 +29,9 @@
 
 - name: Install CUDA
   apt:
-    name: "cuda-{{ cuda_version | replace('.', '-') }}"
-    update_cache: true
+    package:
+      - "cuda-{{ cuda_version | replace('.', '-') }}"
+      - libcudnn7
   when: not cuda_drivers_only
   register: result_install_cuda
 
@@ -46,25 +46,3 @@
     - 'Wait for machine to come back'
 
 - meta: flush_handlers
-
-- name: Set up PATH
-  lineinfile:
-    dest: "{{ cuda_home }}/.bashrc"
-    line: 'export PATH="/usr/local/cuda-{{ cuda_version }}/bin:$PATH"'
-    backup: true
-  when: not cuda_drivers_only
-
-- name: Set up LD_LIBRARY_PATH
-  lineinfile:
-    dest: "{{ cuda_home }}/.bashrc"
-    line: 'export LD_LIBRARY_PATH="/usr/local/cuda-{{ cuda_version }}/lib64:$LD_LIBRARY_PATH"'
-    backup: true
-  when: not cuda_drivers_only
-
-- name: Install cuDNN
-  unarchive:
-    remote_src: yes
-    src: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
-    dest: /usr/local
-    creates: /usr/local/cuda/include/cudnn.h
-  when: not cuda_drivers_only
