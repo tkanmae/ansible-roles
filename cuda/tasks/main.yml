@@ -5,21 +5,20 @@
       - build-essential
       - 'linux-headers-{{ ansible_kernel }}'
 
-- name: Install repository meta data
+- name: Add CUDA repository
   apt:
-    deb: "{{ cuda_repo_metadata[cuda_version] }}"
+    deb: "{{ cuda_repo_deb[cuda_version] }}"
   ignore_errors: true
 
 - name: Add GPG key
   apt_key:
     id: 7FA2AF80
-    url: 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub'
-  register: result
+    url: '{{ cuda_repo_base_url }}/7fa2af80.pub'
 
-- name: Update repositories cache
+- name: Add machine learning repository
   apt:
-    update_cache: true
-  when: result.changed
+    deb: '{{ cuda_ml_repo_deb }}'
+    update_cache: yes
 
 - name: Install CUDA drivers
   apt:
@@ -30,10 +29,20 @@
 
 - name: Install CUDA
   apt:
-    name: "cuda-{{ cuda_version | replace('.', '-') }}"
-    update_cache: true
+    package:
+      - "cuda-{{ cuda_version | replace('.', '-') }}"
   when: not cuda_drivers_only
   register: result_install_cuda
+
+- name: Get cuDNN package name
+  shell: apt-cache policy libcudnn7 | grep "{{ cuda_cudnn_version }}.*{{ cuda_version }}" | head -n -1 | awk '{$1=$1}1' | cut -d ' ' -f 1
+  register: result_get_cudnn_package_name
+
+- name: Install cuDNN
+  apt:
+    package:
+      - "libcudnn7={{ result_get_cudnn_package_name.stdout }}"
+      - "libcudnn7-dev={{ result_get_cudnn_package_name.stdout }}"
 
 - name: Restart machine
   shell: sleep 2 && /sbin/shutdown -r now 'Reboot triggered by Ansible'
@@ -46,25 +55,3 @@
     - 'Wait for machine to come back'
 
 - meta: flush_handlers
-
-- name: Set up PATH
-  lineinfile:
-    dest: "{{ cuda_home }}/.bashrc"
-    line: 'export PATH="/usr/local/cuda-{{ cuda_version }}/bin:$PATH"'
-    backup: true
-  when: not cuda_drivers_only
-
-- name: Set up LD_LIBRARY_PATH
-  lineinfile:
-    dest: "{{ cuda_home }}/.bashrc"
-    line: 'export LD_LIBRARY_PATH="/usr/local/cuda-{{ cuda_version }}/lib64:$LD_LIBRARY_PATH"'
-    backup: true
-  when: not cuda_drivers_only
-
-- name: Install cuDNN
-  unarchive:
-    remote_src: yes
-    src: "{{ cuda_cudnn_file[cuda_cudnn_version] }}"
-    dest: /usr/local
-    creates: /usr/local/cuda/include/cudnn.h
-  when: not cuda_drivers_only
