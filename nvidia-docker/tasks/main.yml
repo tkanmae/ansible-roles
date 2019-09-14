@@ -13,20 +13,17 @@
 
 - name: Add repository
   get_url:
-    url: 'https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list'
+    url: 'https://nvidia.github.io/nvidia-docker/{{ _docker_ubuntu_version_str }}/amd64/nvidia-docker.list'
     dest: '/etc/apt/sources.list.d/nvidia-docker.list'
   register: result
 
-- name: Update repositories cache
-  apt:
-    update_cache: true
-  when: result.changed
-
 - name: Install nvidia-docker
   apt:
-    name: nvidia-docker2
+    update_cache: true
+    package:
+      - nvidia-container-toolkit
   register: result
 
 - name: Reload Docker daemon configuration
-  command: pkill -SIGHUP dockerd
+  command: systemctl restart docker
   when: result.changed
