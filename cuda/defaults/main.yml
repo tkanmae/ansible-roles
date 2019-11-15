@@ -1,5 +1,5 @@
 ---
-cuda_version: "10.0"
+cuda_version: "10.1"
 cuda_cudnn_version: "7.4"
 
 cuda_drivers_only: true
@@ -18,5 +18,6 @@ cuda_repo_deb:
   "9.1": "{{ cuda_repo_base_url }}/cuda-repo-{{ _cuda_ubuntu_version_str }}_9.1.85-1_amd64.deb"
   "9.2": "{{ cuda_repo_base_url }}/cuda-repo-{{ _cuda_ubuntu_version_str }}_9.2.148-1_amd64.deb"
   "10.0": "{{ cuda_repo_base_url }}/cuda-repo-{{ _cuda_ubuntu_version_str }}_10.0.130-1_amd64.deb"
+  "10.1": "{{ cuda_repo_base_url }}/cuda-repo-{{ _cuda_ubuntu_version_str }}_10.1.168-1_amd64.deb"
 
 cuda_ml_repo_deb: "{{ _cuda_ml_repo_url }}/nvidia-machine-learning-repo-{{ _cuda_ubuntu_version_str }}_1.0.0-1_amd64.deb"
