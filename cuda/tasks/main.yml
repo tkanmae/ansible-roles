@@ -18,7 +18,6 @@
 - name: Add machine learning repository
   apt:
     deb: '{{ cuda_ml_repo_deb }}'
-    update_cache: yes
 
 - name: Install CUDA drivers
   apt:
@@ -43,6 +42,7 @@
     package:
       - "libcudnn7={{ result_get_cudnn_package_name.stdout }}"
       - "libcudnn7-dev={{ result_get_cudnn_package_name.stdout }}"
+    update_cache: yes
 
 - name: Restart machine
   shell: sleep 2 && /sbin/shutdown -r now 'Reboot triggered by Ansible'
