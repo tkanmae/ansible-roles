@@ -10,7 +10,7 @@ _cuda_ubuntu_version_str: "ubuntu{{ ansible_distribution_version | replace('.', 
 _cuda_nvidia_base_url: "http://developer.download.nvidia.com/compute"
 _cuda_ml_repo_url: "{{ _cuda_nvidia_base_url }}/machine-learning/repos/{{ _cuda_ubuntu_version_str }}/x86_64"
 
-cuda_repo_base_url: "{{ cuda_nvidia_base_url }}/cuda/repos/{{ _cuda_ubuntu_version_str }}/x86_64"
+cuda_repo_base_url: "{{ _cuda_nvidia_base_url }}/cuda/repos/{{ _cuda_ubuntu_version_str }}/x86_64"
 
 cuda_repo_deb:
   "8.0": "{{ cuda_repo_base_url }}/cuda-repo-{{ _cuda_ubuntu_version_str }}_8.0.61-1_amd64.deb"
