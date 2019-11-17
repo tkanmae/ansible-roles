@@ -6,15 +6,13 @@
     force: no
 
 - name: Install conda
-  command: bash Miniconda3-latest-Linux-x86_64.sh -b -p "{{ conda_home }}/.miniconda3"
+  command: bash Miniconda3-latest-Linux-x86_64.sh -b -p "{{ conda_home }}"
   args:
     chdir: /var/tmp
-    creates: "{{ conda_home }}/.miniconda3"
-  become: yes
-  become_user: "{{ conda_user }}"
+    creates: "{{ conda_home }}"
 
 - name: Set up conda
   lineinfile:
-    dest: "{{ conda_home }}/.bashrc"
-    line: '. "{{ conda_home }}/.miniconda3/etc/profile.d/conda.sh"'
+    dest: "{{ ansible_env.PWD }}/.bashrc"
+    line: '. "{{ conda_home }}/etc/profile.d/conda.sh"'
     backup: yes
