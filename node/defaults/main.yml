@@ -1,0 +1,9 @@
+---
+# Node version
+node_version: "12.13.0"
+
+# NVM version
+nvm_version: "0.35.1"
+
+# Directory where NVM is installed.
+nvm_home: ""

@@ -1,0 +1,15 @@
+---
+- name: Download NVM installer
+  get_url:
+    url: "https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh"
+    dest: /var/tmp/install.sh
+
+- name: Install NVM
+  shell: NVM_DIR={{ nvm_home }} PROFILE=~/.bashrc bash /var/tmp/install.sh
+  args:
+    creates: "{{ nvm_home }}/.nvm/nvm.sh"
+
+- name: Install Node
+  shell: bash -ic "nvm install v{{ node_version }}"
+  args:
+    creates: "{{ nvm_home }}/.nvm/versions/node/v{{ node_version }}/bin/node"
