@@ -1,10 +1,11 @@
 ---
-cuda_version: "10.1"
-cuda_cudnn_version: "7.4"
-
+# When the value is set to yes, this role installs nvidia drivers without CUDA toolkit.
 cuda_drivers_only: true
 
-cuda_home: /home/ubuntu
+# CUDA toolkit version
+cuda_version: "10.1"
+# cuDNN version
+cuda_cudnn_version: "7.4"
 
 _cuda_ubuntu_version_str: "ubuntu{{ ansible_distribution_version | replace('.', '') }}"
 _cuda_nvidia_base_url: "http://developer.download.nvidia.com/compute"
