@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    ansible_unit_test: true
+  roles:
+    - role: ../..
