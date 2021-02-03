@@ -34,7 +34,9 @@
   register: result_install_cuda
 
 - name: Get cuDNN package name
-  shell: apt-cache policy libcudnn7 | grep "{{ cuda_cudnn_version }}.*{{ cuda_version }}" | head -n -1 | awk '{$1=$1}1' | cut -d ' ' -f 1
+  shell: >
+    set -o pipefail && \
+    apt-cache policy libcudnn7 | grep "{{ cuda_cudnn_version }}.*{{ cuda_version }}" | head -n -1 | awk '{$1=$1}1' | cut -d ' ' -f 1
   register: result_get_cudnn_package_name
 
 - name: Install cuDNN
