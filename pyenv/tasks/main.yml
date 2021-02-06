@@ -14,11 +14,11 @@
   become_user: root
 
 - name: Install pyenv
-  git:
-    repo: https://github.com/pyenv/pyenv.git
-    version: "{{ pyenv_version }}"
-    dest: "{{ pyenv_home }}"
-    recursive: true
+  shell: >
+    set -o pipetail && \
+    curl https://pyenv.run | bash
+  args:
+    creates: "{{ ansible_env.PWD }}/.pyenv"
 
 - name: Set up pyenv
   lineinfile:
@@ -26,19 +26,6 @@
     line: "{{ item }}"
     backup: yes
   with_items:
-    - 'export PYENV_ROOT="{{ pyenv_home }}"'
-    - 'export PATH="$PYENV_ROOT/bin:$PATH"'
+    - 'export PATH="$HOME/.pyenv/bin:$PATH"'
     - 'eval "$(pyenv init -)"'
-
-- name: Install pyenv-virtualenv
-  git:
-    repo: https://github.com/pyenv/pyenv-virtualenv.git
-    version: "{{ pyenv_virtualenv_version }}"
-    dest: "{{ pyenv_home }}/plugins/pyenv-virtualenv"
-    recursive: true
-
-- name: Set up pyenv-virtualenv
-  lineinfile:
-    dest: "{{ ansible_env.PWD }}/.bashrc"
-    line: 'eval "$(pyenv virtualenv-init -)"'
-    backup: yes
+    - 'eval "$(pyenv virtualenv-init -)"'

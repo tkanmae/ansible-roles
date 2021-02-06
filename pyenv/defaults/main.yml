@@ -1,7 +1,0 @@
----
-# Directory where pyenv is installed.
-pyenv_home: "{{ ansible_env.PWD }}/.pyenv"
-
-pyenv_version: v1.2.22
-pyenv_virtualenv_version: v1.1.5
-
